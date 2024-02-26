@@ -1,0 +1,65 @@
+---
+- name: Launch DC01 Instances
+  ec2_instance:
+    name: "DC01"
+    image_id: "{{ windows_ami_id }}"
+    instance_type: "t2.micro"
+    key_name: "{{ key_name }}"
+    count: 1
+    subnet_id: "{{ private_subnet_result.subnet.id }}"
+    security_groups: ["{{ private_sg_result.group_id }}"]
+    region: "{{ region }}"
+    network:
+      auto_assign_public_ip: false
+      private_ip_address: "10.0.10.10"
+    user_data: "{{ lookup('file', './scripts/setup.ps1') }}"
+    wait: true
+    wait_timeout: 600
+  register: dc01_result
+  ignore_errors: true
+
+- debug:
+    var: dc01_result.instance_ids
+
+- name: Launch WEBSRV Instances
+  ec2_instance:
+    name: "WEBSRV"
+    image_id: "{{ windows_ami_id }}"
+    instance_type: "t2.micro"
+    key_name: "{{ key_name }}"
+    count: 1
+    subnet_id: "{{ private_subnet_result.subnet.id }}"
+    security_groups: ["{{ private_sg_result.group_id }}"]
+    region: "{{ region }}"
+    network:
+      private_ip_address: "10.0.10.20"
+    user_data: "{{ lookup('file', './scripts/setup.ps1') }}"
+    wait: true
+    wait_timeout: 600
+  register: web_result
+  ignore_errors: true
+
+- debug:
+    var: web_result.instance_ids
+
+- name: Launch PRODSRV Instances
+  ec2_instance:
+    name: "PRODSRV"
+    image_id: "{{ windows_ami_id }}"
+    instance_type: "t2.micro"
+    key_name: "{{ key_name }}"
+    count: 1
+    subnet_id: "{{ private_subnet_result.subnet.id }}"
+    security_groups: ["{{ private_sg_result.group_id }}"]
+    region: "{{ region }}"
+    network:
+      private_ip_address: "10.0.10.30"
+    user_data: "{{ lookup('file', './scripts/setup.ps1') }}"
+    wait: true
+    wait_timeout: 600
+  register: prod_result
+  ignore_errors: true
+
+- debug:
+    var: prod_result.instance_ids
+

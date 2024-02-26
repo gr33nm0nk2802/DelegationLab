@@ -1,0 +1,87 @@
+---
+- name: Destroy AWS Resources
+  hosts: localhost
+  gather_facts: false
+  environment:
+    AWS_PROFILE: "adlab"
+  vars_files:
+    - global_vars/main.yml
+
+  tasks:
+
+    - name: Terminate every running instance in a region. Use with EXTREME caution.
+      ec2_instance:
+        state: absent
+        filters:
+          instance-state-name: "running"
+          
+    - name: Delete Key Pair
+      ec2_key:
+        region: "{{ region }}"
+        name: "{{ key_name }}"
+        file_name: "./keypair/adlab.pem"
+        state: "absent"
+
+    - name: Delete Public Security Group
+      ec2_group:
+        region: "{{ region }}"
+        name: "{{ public_sg_name }}"
+        state: "absent"
+
+    - name: Delete Private Security Group
+      ec2_group:
+        region: "{{ region }}"
+        name: "{{ private_sg_name }}"
+        state: "absent"
+
+    - name: Get VPC Facts
+      ec2_vpc_net_info:
+        region: "{{region}}" 
+        filters:
+          "tag:Name": "{{ vpc_name }}"
+      register: vpc_facts
+
+    - name: Set VPC ID
+      set_fact:
+        vpc_id: "{{ vpc_facts.vpcs[0].id }}"
+      when: vpc_facts.vpcs | length > 0
+    
+    - name: Delete Public Subnet
+      ec2_vpc_subnet:
+        vpc_id: "{{ vpc_id }}"
+        cidr: "{{ public_subnet_cidr }}"
+        region: "{{ region }}"
+        az: "{{ availability_zone }}"
+        state: "absent"
+      when: vpc_id is defined and vpc_id != ""
+
+    - name: Delete Private Subnet
+      ec2_vpc_subnet:
+        vpc_id: "{{ vpc_id }}"
+        cidr: "{{ private_subnet_cidr }}"
+        region: "{{ region }}"
+        az: "{{ availability_zone }}"
+        state: "absent"
+      when: vpc_id is defined and vpc_id != ""
+
+    - name: Delete Internet Gateway
+      ec2_vpc_igw:
+        region: "{{ region }}"
+        vpc_id: "{{ vpc_id }}"
+        state: "absent"
+      when: vpc_id is defined and vpc_id != ""
+
+    - name: Delete Route Table
+      ec2_vpc_route_table:
+        vpc_id: "{{ vpc_id }}"
+        region: "{{ region }}"
+        tags:
+          Name: adlab-route
+        state: absent 
+      when: vpc_id is defined and vpc_id != ""
+
+    - name: Delete VPC
+      ec2_vpc_net:
+        vpc_id: "{{ vpc_id }}"
+        state: "absent"
+      when: vpc_id is defined and vpc_id != ""

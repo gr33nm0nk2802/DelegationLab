@@ -1,0 +1,13 @@
+---
+- name: Enable Unconstrained delegation on WebSrv
+  hosts: dc01
+  gather_facts: false
+  tasks:
+    - name: Set TrustedForDelegation to true and clear PrincipalsAllowedToDelegateToAccount
+      ansible.windows.win_powershell: 
+        script: |
+          Set-ADComputer -Identity WebSrv -TrustedForDelegation $true -PrincipalsAllowedToDelegateToAccount $null
+          Get-ADUser -Identity "iis_svc" | Set-ADAccountControl -TrustedForDelegation $true
+
+
+    

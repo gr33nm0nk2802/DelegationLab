@@ -1,0 +1,11 @@
+---
+- name: Create Internet Gateway
+  ec2_vpc_igw:
+    vpc_id: "{{ vpc_result.vpc.id }}"
+    region: "{{ region }}"
+    tags:
+      Name: adlab-igw
+  register: igw_result
+
+- debug:
+    var: igw_result.gateway_id

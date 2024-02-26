@@ -1,0 +1,20 @@
+---
+- name: Provison AWS Resources
+  hosts: localhost
+  gather_facts: false
+  environment:
+    AWS_PROFILE: "adlab"
+  vars_files:
+    - global_vars/main.yml
+  roles:
+    - create_vpc
+    - create_subnet
+    - create_internet_gateway
+    - create_route_table
+    - create_security_group
+    - create_key_pair
+    - windows_ami
+    - ubuntu_ami
+    - launch_public_subnet_ec2
+    - launch_private_subnet_ec2
+

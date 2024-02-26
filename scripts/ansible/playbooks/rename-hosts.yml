@@ -1,0 +1,10 @@
+---
+- name: Rename Windows Hosts
+  hosts: windows
+  gather_facts: false
+  become: false
+
+  tasks:
+    - name: Set Hostname
+      win_command: powershell.exe -Command "Rename-Computer -NewName {{ inventory_hostname }} -Force -Restart"
+      ignore_errors: yes

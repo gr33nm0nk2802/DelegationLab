@@ -1,0 +1,46 @@
+---
+- name: Create Public Security Group
+  ec2_group:
+    name: "{{ public_sg_name }}"
+    description: "Allow inbound SSH and RDP"
+    vpc_id: "{{ vpc_result.vpc.id }}"
+    region: "{{ region }}"
+    rules:
+      - proto: tcp
+        from_port: 22
+        to_port: 22
+        cidr_ip: 0.0.0.0/0
+      - proto: tcp
+        from_port: 8000
+        to_port: 8000
+        cidr_ip: 0.0.0.0/0
+      - proto: tcp
+        from_port: 8080
+        to_port: 8080
+        cidr_ip: 0.0.0.0/0
+      - proto: tcp
+        from_port: 3389
+        to_port: 3389
+        cidr_ip: 0.0.0.0/0
+      - proto: tcp
+        from_port: 5985
+        to_port: 5985
+        cidr_ip: 0.0.0.0/0
+  register: public_sg_result
+
+- debug:
+    var: public_sg_result.group_id
+
+- name: Create Private Security Group
+  ec2_group:
+    name: "{{ private_sg_name }}"
+    description: "Allow inbound SSH and RDP"
+    vpc_id: "{{ vpc_result.vpc.id }}"
+    region: "{{ region }}"
+    rules:
+      - proto: all  
+        cidr_ip: 10.0.0.0/16
+  register: private_sg_result
+
+- debug:
+    var: private_sg_result.group_id

@@ -1,0 +1,21 @@
+---
+- name: Enable SMB 1.0/CIFS File Sharing Support
+  hosts: windows
+  gather_facts: true
+  tasks:
+    - name: Install SMB 1.0/CIFS File Sharing Support
+      win_feature:
+        name: FS-SMB1
+        state: present
+    
+    - name: Install IIS Feature
+      win_feature:
+        name: Web-Server
+        state: present
+    
+    - name: Restart
+      ansible.windows.win_powershell: 
+        script: |
+          Restart-Computer -Force
+
+

@@ -1,0 +1,29 @@
+---
+- name: Add users to Active Directory
+  hosts: dc01
+  gather_facts: no
+
+  vars:
+    ad_admin_user: "Administrator@red.local"
+    ad_admin_password: "P@ssw0rd1!"
+    users:
+      - name: iis_svc
+        password: "DelegateUser1"
+      - name: prod_svc
+        password: "P@ss123!"
+      - name: rbcd
+        password: "Summer2024"
+      - name: monk
+        password: "1337P@$$15h4rd#"
+      - name: domuser
+        password: "P@ssw0rd1!"
+
+  tasks:
+    - name: Adding User
+      win_domain_user:
+        name: "{{ item.name }}"
+        password: "{{ item.password }}"
+        state: present
+        domain_username: "{{ ad_admin_user }}"
+        domain_password: "{{ ad_admin_password }}"
+      with_items: "{{ users }}"

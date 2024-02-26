@@ -1,0 +1,16 @@
+---
+- name: Enable constrained delegation on ProdSrv
+  hosts: dc01
+  gather_facts: false
+  tasks:
+    - name: Set the msDS-AllowedToDelegateTo property and SPNs 
+      ansible.windows.win_powershell: 
+        script: |
+          # Machine Account Constrained Delegation - kerberos only
+          Set-ADComputer -Identity "prodsrv$" -ServicePrincipalNames @{Add='HOST/websrv.red.local'}
+          Set-ADComputer -Identity "prodsrv$" -Add @{'msDS-AllowedToDelegateTo'=@('HOST/websrv.red.local','HOST/websrv')}
+
+          # User Based Constrained Delegation - any protocol
+          Set-ADUser -Identity "prod_svc" -ServicePrincipalNames @{Add='CIFS/dc01.red.local'}
+          Get-ADUser -Identity "prod_svc" | Set-ADAccountControl -TrustedToAuthForDelegation $true
+          Set-ADUser -Identity "prod_svc" -Add @{'msDS-AllowedToDelegateTo'=@('CIFS/dc01.red.local','CIFS/dc01')}

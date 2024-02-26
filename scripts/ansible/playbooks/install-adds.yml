@@ -1,0 +1,29 @@
+---
+- name: Install and Configure Active Directory Domain Services
+  hosts: dc01
+  gather_facts: false
+  
+  tasks:
+    - name: Set DNS Server IP Addresses
+      win_dns_client:
+        adapter_names:
+          - "Ethernet"  
+        ipv4_addresses:
+          - "10.0.10.10"
+          - "127.0.0.1"
+
+    - name: Install AD DS Feature
+      win_feature:
+        name: AD-Domain-Services
+        state: present
+    
+    - name: Create new domain in a new forest on the target host and reboot
+      microsoft.ad.domain:
+        dns_domain_name: red.local
+        database_path: C:\Windows\NTDS
+        domain_mode: WinThreshold
+        domain_netbios_name: RED
+        forest_mode: WinThreshold
+        sysvol_path: C:\Windows\SYSVOL
+        safe_mode_password: P@ssw0rd1!
+        reboot: true

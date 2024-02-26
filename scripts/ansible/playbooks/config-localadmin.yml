@@ -1,0 +1,17 @@
+---
+- name: Local Config on Client Computers
+  hosts: 
+    - websrv
+    - prodsrv
+  gather_facts: false
+
+  tasks:
+    
+    - name: Configure domuser with RDP and local admin permissions 
+      ansible.windows.win_powershell: 
+        script: |
+          net localgroup Administrators RED\domuser /add
+          net localgroup "Remote Desktop Users" RED\domuser /add
+
+          # Config DNS
+          Add-Content -Path C:\Windows\System32\drivers\etc\hosts -Value "10.0.10.10 dc01"   # Windows

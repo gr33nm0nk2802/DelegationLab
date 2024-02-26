@@ -1,0 +1,19 @@
+---
+- name: Find Windows Server 2019 AMI
+  ec2_ami_info:
+    region: "{{ region }}"
+    owners: ["amazon"]
+    filters:
+      name: "Windows_Server-2019-English-Full-Base-*"
+      architecture: "x86_64"
+      root-device-type: "ebs"
+      virtualization-type: "hvm"
+      state: "available"
+  register: win_ami_result
+
+- name: Set AMI Image ID as a variable
+  set_fact:
+    windows_ami_id: "{{ win_ami_result.images[-1].image_id }}"
+
+- debug: 
+    var: windows_ami_id

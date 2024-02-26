@@ -1,0 +1,19 @@
+---
+- name: Create Route Table
+  ec2_vpc_route_table:
+    vpc_id: "{{ vpc_result.vpc.id }}"
+    region: "{{ region }}"
+    tags:
+      Name: adlab-route
+    subnets: 
+      - "{{ public_subnet_cidr }}"
+      - "{{ private_subnet_cidr }}"
+    routes:
+      - dest: 0.0.0.0/0
+        gateway_id: "{{ igw_result.gateway_id }}"
+      - dest: ::/0
+        gateway_id: "{{ igw_result.gateway_id }}"
+  register: route_table_result
+
+- debug:
+    var: route_table_result.route_table.id

@@ -1,0 +1,29 @@
+---
+- name: Create Public Subnet
+  ec2_vpc_subnet:
+    tags:
+      Name: adlab-public-Subnet
+    state: "present"
+    vpc_id: "{{ vpc_result.vpc.id }}"
+    cidr: "{{ public_subnet_cidr }}"
+    region: "{{ region }}"
+    az: "{{ availability_zone }}"
+    map_public: "true"
+  register: public_subnet_result
+
+- debug:
+    var: public_subnet_result.subnet.cidr_block
+
+- name: Create Private Subnet
+  ec2_vpc_subnet:
+    tags:
+      Name: adlab-private-Subnet
+    state: "present"
+    vpc_id: "{{ vpc_result.vpc.id }}"
+    cidr: "{{ private_subnet_cidr }}"
+    region: "{{ region }}"
+    az: "{{ availability_zone }}"
+  register: private_subnet_result
+
+- debug: 
+    var: private_subnet_result.subnet.cidr_block

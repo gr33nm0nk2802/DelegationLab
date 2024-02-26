@@ -1,0 +1,16 @@
+---
+- name: Enable Resource Based Constrained Delegation
+  hosts: dc01
+  gather_facts: false
+  tasks:
+    - name: Give GenericWrite to a Domain User over Computer Object
+      ansible.windows.win_powershell: 
+        script: |
+          $computerDN = "CN=WEBSRV,CN=Computers,DC=red,DC=local"
+          $userOrGroup = "rbcd"
+          $accessRights = "GenericWrite"  # Adjust as needed
+          $adObject = Get-ADObject -Filter { DistinguishedName -eq $computerDN } -Properties nTSecurityDescriptor
+          $securityDescriptor = $adObject.nTSecurityDescriptor
+          $rule = new-object System.DirectoryServices.ActiveDirectoryAccessRule (New-Object System.Security.Principal.NTAccount $userOrGroup),$accessRights,"Allow"
+          $securityDescriptor.AddAccessRule($rule)
+          Set-ADObject -Identity $adObject -Replace @{ nTSecurityDescriptor = $securityDescriptor }

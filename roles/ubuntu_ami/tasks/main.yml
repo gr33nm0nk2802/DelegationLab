@@ -1,0 +1,18 @@
+---
+- name: Get Ubuntu 20.04 AMI facts
+  ec2_ami_info:
+    region: "{{ region }}"
+    owners: ["099720109477"]  # Canonical's AWS account ID for Ubuntu
+    filters:
+      name: "ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"
+      architecture: x86_64
+      root-device-type: ebs
+      virtualization-type: hvm
+      state: available
+  register: lin_ami_results
+
+- name: Set AMI Image ID as a variable
+  set_fact:
+    ubuntu_20_04_ami_id: "{{ lin_ami_results.images[-1].image_id }}"
+- debug: 
+    var: ubuntu_20_04_ami_id

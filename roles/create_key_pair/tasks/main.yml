@@ -1,0 +1,7 @@
+---
+- name: Create Key Pair for Windows
+  ec2_key:
+    name: "{{ key_name }}"
+    region: "{{ region }}"
+    file_name: "./keypair/adlab.pem"
+  register: keypair_result

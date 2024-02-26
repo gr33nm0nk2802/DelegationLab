@@ -1,0 +1,17 @@
+---
+- name: Join Machine to Domain
+  hosts: 
+    - websrv
+    - prodsrv
+  gather_facts: false
+
+  tasks:
+    - name: Adding Client Computer to Domain RED.LOCAL
+      win_domain_membership:
+        dns_domain_name: red.local
+        hostname: "{{ inventory_hostname }}"
+        domain_admin_user: Administrator@red.local
+        domain_admin_password: P@ssw0rd1!
+        state: domain
+      register: domain_state
+    

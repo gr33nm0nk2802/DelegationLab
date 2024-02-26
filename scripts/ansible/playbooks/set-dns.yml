@@ -1,0 +1,16 @@
+---
+- name: Join Machines to Domain
+  hosts: 
+    - websrv
+    - prodsrv
+  gather_facts: false
+  become: true
+
+  tasks:
+    - name: Set DNS Server on Windows
+      win_dns_client:
+        adapter_names:
+          - "Ethernet"
+        ipv4_addresses:
+          - "10.0.10.10" 
+      become_user: Administrator
