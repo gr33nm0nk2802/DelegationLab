@@ -21,7 +21,7 @@ This project was created to demonstrate the three types of kerberos delegations.
 
 The infrastructure is configured as follows.
 
-![](/docs/assets/images/Delegationlab-Diagram.png)
+![](/docs/assets/images/DelegationLab-Diagram.png)
 
 ## Configuring the RED.LOCAL domain with ansible
 
