@@ -108,6 +108,8 @@ dir \\dc01\c$
 
 # Kerberos Constrained Delegation - User
 
+Assumption here is we have gottent access to the prod_svc account via some means and then we can use it further to abuse constrained delegation.
+
 ## Enumeration
 
 1. ADModule
@@ -169,4 +171,6 @@ klist
 ```bash
 dir \\dc01\c$
 ```
+![](/docs/assets/images/KCD-7.png)
 
+---
