@@ -14,7 +14,7 @@ python3 -m pip install ansible-core
 python3 -m pip install pywinrm
 python3 -m pip install impacket
 python3 -m pip install coercer
-
+python3 -m pip install bloodhound
 
 # Install the required ansible libraries
 /home/ubuntu/.local/bin/ansible-galaxy install -r /home/ubuntu/DelegationLab/scripts/ansible/requirements.yml
