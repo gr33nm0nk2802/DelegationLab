@@ -9,12 +9,18 @@
 
   tasks:
 
-    #       Dangerous
-    # - name: Terminate every running instance in a region. Use with EXTREME caution.
-    #   ec2_instance:
-    #     state: absent
-    #     filters:
-    #       instance-state-name: "running"
+    - name: Terminate every running instance in a region. Use with EXTREME caution.
+      ec2_instance:
+        state: absent
+        region: "{{ region }}"
+        filters:
+          "tag:Name": "{{ item }}"
+      loop:
+        - ATTACKER-LIN
+        - ATTACKER-WIN
+        - DC01
+        - WEBSRV
+        - PRODSRV
           
     - name: Delete Key Pair
       ec2_key:

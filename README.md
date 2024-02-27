@@ -41,9 +41,9 @@ The infrastructure is configured as follows.
 
 # TODO 
 
-- [ ] Modify the Destroy script to delete selected instances only
+- [x]~~Modify the Destroy script to delete selected instances only~~
+- [x]~~Add a Solution Book for each vulnerability~~.
 - [ ] Fix DNS Issues
-- [ ] Add a Solution Book for each vulnerability.
 - [ ] DC Auto logon on Scheduled Task
 - [ ] Check KUD - User Account
 - [ ] Check KCD - Computer Account
