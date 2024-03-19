@@ -6,6 +6,10 @@
 
 This project was created to demonstrate the three types of kerberos delegations. Kerberos Unconstrained Delegations(KUD), Kerberos Constrained Delegation(KCD) and Resource Based Constrained Delegation(RBCD). The lab is going to do the following.
 
+# Demo 
+
+[Payatu Webinar](https://www.youtube.com/watch?v=7LSIo5U0YIw)
+
 ## Provisoning the Infrastructure in AWS
  
 - Create DelegationLab-vpc
